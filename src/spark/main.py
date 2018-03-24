@@ -19,18 +19,24 @@ def main():
     TRAIN_PATH = FILE_DIRECTORY + "train_set.csv"
     VALIDATE_PATH = FILE_DIRECTORY + "validate_set.csv"
 
-    #2 train
-    rdd = load_dataset(TRAIN_PATH)
-    dataframe1, PCA_model = pca_opreator(rdd, 2)
-    dataframe2, rf_model = random_forest_opreator(dataframe1)
-    # model = Pipeline(stages=[PCA_model, rf_model])
-    # rdd2 = load_dataset(VALIDATE_PATH)
-    # dataset2 = model.transfrom(rdd2)
-    dataframe2.show(20)
+    train_set = load_dataset(TRAIN_PATH)
+    validate_set = load_dataset(VALIDATE_PATH)
+    #2 model define
+    
+    PCA_model = pca_opreator(2)
+    rf_model = random_forest_opreator()
+    pipeline = Pipeline(stages=[PCA_model, rf_model])
+    model = pipeline.fit(train_set)
+    #3
+    train_dataframe = model.transform(train_set)
+    validate_dataframe = model.transform(validate_set)
 
-    #3 evaluate
+    validate_dataframe.show(10)
+    #4 evaluate
     evaluator = MulticlassClassificationEvaluator(labelCol="indexed_label", predictionCol="prediction", metricName="accuracy")
-    accuracy = evaluator.evaluate(dataframe2)
-    print("Test Error = %g" % (1.0 - accuracy))
+    accuracy_train = evaluator.evaluate(train_dataframe)
+    accuracy_validate = evaluator.evaluate(validate_dataframe)
+    print("accuracy on train set = %g" % (accuracy_train))
+    print("accuracy on validation set = %g" % (accuracy_validate))
 if __name__ == '__main__':
     main()

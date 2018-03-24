@@ -6,7 +6,7 @@
 from pyspark.ml.feature import PCA
 from pyspark.ml.linalg import Vectors
 from pyspark.sql import SQLContext
-def pca_opreator(df, k):
+def pca_opreator(k):
     '''
         do PCA on dataset
         inputformat:(DataFrame)
@@ -15,11 +15,11 @@ def pca_opreator(df, k):
             Row(<feature>, <label>, <PCA_feature>)
     '''
     # df = SQLContext.createDateFrame(RDD)
-    model = PCA(k=k, inputCol='feature', outputCol='PCA_feature').fit(df)
-    pca_df = model.transform(df)
-    model.write().overwrite().save("fault_diagnosis/models/pca.model")
-    pca_df.select('pca_feature').show(truncate=False)
-    return pca_df, model
+    model = PCA(k=k, inputCol='feature', outputCol='PCA_feature')
+    # pca_df = model.transform(df)
+    # model.write().overwrite().save("fault_diagnosis/models/pca.model")
+    # pca_df.select('pca_feature').show(truncate=False)
+    return model
 
 
 if __name__ == 'main':

@@ -7,7 +7,7 @@ from pyspark.ml.classification import RandomForestClassifier
 from pyspark.ml.feature import IndexToString, StringIndexer
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 
-def random_forest_opreator(dataframe):
+def random_forest_opreator():
     '''
         input:
             Row(<feature>, <label>, <PCA_feature>)
@@ -16,12 +16,13 @@ def random_forest_opreator(dataframe):
 
     '''
     #1 
-    labelIndexer = StringIndexer(inputCol="label", outputCol="indexed_label").fit(dataframe)
-    rf = RandomForestClassifier(labelCol="indexed_label", featuresCol="PCA_feature", numTrees=5, maxDepth=15, maxBins=128)
-    labelConverter = IndexToString(inputCol="prediction", outputCol="predicted_label",labels=labelIndexer.labels)
-    pipeline = Pipeline(stages=[labelIndexer, rf, labelConverter])
+    labelIndexer = StringIndexer(inputCol="label", outputCol="indexed_label")
+    rf = RandomForestClassifier(labelCol="indexed_label", featuresCol="PCA_feature", numTrees=25, maxDepth=15, maxBins=128)
+    # labelConverter = IndexToString(inputCol="prediction", outputCol="predicted_label")
+    # pipeline = Pipeline(stages=[labelIndexer, rf, labelConverter])
+    pipeline = Pipeline(stages=[labelIndexer, rf])
 
     #2 
-    model = pipeline.fit(dataframe)
-    prediction = model.transform(dataframe)
-    return prediction, model
+    # model = pipeline.fit(dataframe)
+    # prediction = model.transform(dataframe)
+    return pipeline
